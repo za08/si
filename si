@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Set the output file
+OUTPUT_FILE="si.txt"
+
+# Function to add a section header
+add_section() {
+    echo -e "\n=== $1 ===" >> "$OUTPUT_FILE"
+}
+
+# Start the report
+echo "System Information - $(date)" > "$OUTPUT_FILE"
+
+# System Information
+add_section "System Information"
+hostnamectl >> "$OUTPUT_FILE"
+
+# CPU Information
+add_section "CPU Information"
+lscpu >> "$OUTPUT_FILE"
+
+# Memory Information
+add_section "Memory Information"
+free -h >> "$OUTPUT_FILE"
+
+# Disk Usage
+add_section "Disk Usage"
+df -h >> "$OUTPUT_FILE"
+
+# Network Interfaces
+add_section "Network Interfaces"
+ip addr >> "$OUTPUT_FILE"
+
+# Installed Packages (for Debian-based systems)
+if command -v dpkg &> /dev/null; then
+    add_section "Installed Packages"
+    dpkg --get-selections >> "$OUTPUT_FILE"
+fi
+
+# System Logs (last 50 lines)
+add_section "System Logs (last 50 lines)"
+tail -n 50 /var/log/syslog >> "$OUTPUT_FILE"
+
+# Running Processes
+add_section "Running Processes"
+ps aux >> "$OUTPUT_FILE"
+
+# Loaded Kernel Modules
+add_section "Loaded Kernel Modules"
+lsmod >> "$OUTPUT_FILE"
+
+# System Uptime
+add_section "System Uptime"
+uptime >> "$OUTPUT_FILE"
+
+# Finish the report
+echo -e "\nReport completed. Output saved to $OUTPUT_FILE"
